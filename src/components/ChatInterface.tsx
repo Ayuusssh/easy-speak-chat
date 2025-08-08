@@ -165,7 +165,7 @@ export function ChatInterface({ user, onLogout }: ChatInterfaceProps) {
                   <div className="p-4">
                     <p className="text-sm leading-relaxed">{message.content}</p>
                     <p className="text-xs opacity-70 mt-2">
-                      {message.timestamp.toLocaleTimeString()}
+                      {new Date(message.timestamp).toLocaleTimeString()}
                     </p>
                   </div>
                 </Card>
