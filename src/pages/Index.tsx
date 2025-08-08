@@ -1,13 +1,48 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import { LandingPage } from "@/components/LandingPage";
+import { AuthModal } from "@/components/AuthModal";
+import { ChatInterface } from "@/components/ChatInterface";
 
 const Index = () => {
+  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const [showAuth, setShowAuth] = useState(false);
+
+  // Check for saved user on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem("simplifyai-user");
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem("simplifyai-user");
+      }
+    }
+  }, []);
+
+  const handleAuth = (userData: { email: string; name: string }) => {
+    setUser(userData);
+    localStorage.setItem("simplifyai-user", JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("simplifyai-user");
+    localStorage.removeItem("simplifyai-messages");
+  };
+
+  if (user) {
+    return <ChatInterface user={user} onLogout={handleLogout} />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      <LandingPage onGetStarted={() => setShowAuth(true)} />
+      <AuthModal 
+        isOpen={showAuth} 
+        onClose={() => setShowAuth(false)} 
+        onAuth={handleAuth}
+      />
+    </>
   );
 };
 
